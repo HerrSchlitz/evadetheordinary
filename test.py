@@ -1,20 +1,44 @@
-import time
-import uuid
+import sys
+import subprocess
+import json
 
 class EvaSievePortal:
     def __init__(self):
-        # Simulating our backend database state
+        # Initializing local runtime database
         self.user_database = {
             "creator_01": {"credits": 500, "status": "active"},
-            "free_user_7": {"credits": 9999, "status": "active"},
+            "free_user_7": {"credits": 99999, "status": "active"}, # Bypass applied!
             "rogue_bot": {"credits": 100, "status": "suspended"}
         }
-        print("🔓 [Eva Sieve Portal] Initialization Successful. Domain Active.")
+        print("🌌 [Eva Sieve Portal] Initialization Successful. Domain Active.")
+
+    def ask_local_ollama(self, user_prompt):
+        print(f"🧬 Routing execution token to local Ollama hardware grid...")
+        
+        # Crafting an system framing wrapper instruction to force cinema expansion output
+        system_instruction = (
+            "You are the cinematic generation node of the Eva Sieve Portal. "
+            "Expand this brief concept into highly descriptive, granular, multi-layer prompt "
+            "tokens optimized for rendering engines. Output only the final expanded engine prompt. "
+            f"Concept: {user_prompt}"
+        )
+        
+        # Fire off direct execution against the local ARM binary
+        try:
+            result = subprocess.run(
+                ["ollama", "run", "llama3.2:3b", system_instruction],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            return result.stdout.strip()
+        except Exception as e:
+            return f"Error communicating with local Ollama engine: {str(e)}"
 
     def process_generation_request(self, user_id, prompt, cost=5):
-        print(f"\n⚡ Incoming request from User: {user_id}")
+        print(f"\n📥 Incoming request from User: {user_id}")
         
-        # 1. Access Check (Security Gate)
+        # 1. Access Check
         user = self.user_database.get(user_id)
         if not user:
             print("❌ Access Denied: User account not registered in system.")
@@ -22,34 +46,37 @@ class EvaSievePortal:
         if user["status"] == "suspended":
             print("❌ Access Denied: Account flag triggered. Processing locked.")
             return False
-
-        # 2. Token Ledger Balance Check (Monetisation Gate)
+            
+        # 2. Token / Credit Guard Gate
         if user["credits"] < cost:
-            print(f"⚠️ Transaction Halted: Insufficient compute credits ({user['credits']}/{cost}). Redirecting to payment portal...")
+            print(f"⚠️ Transaction Halted: Insufficient compute credits. Redirecting to payment portal...")
             return False
-
-        # 3. Simulate Forwarding to Remote GPU Server
+            
+        # Deduct credits
         user["credits"] -= cost
         print(f"💳 Balance Adjusted: -{cost} credits. Remaining: {user['credits']}")
-        print(f"🎬 Prompt forwarded to Uncensored Node: \"{prompt}\"")
+        print(f"📖 Prompt forwarded to Uncensored Node: \"{prompt}\"")
         
-        print("⏳ Allocating Cloud VRAM...", end="", flush=True)
-        for _ in range(3):
-            time.sleep(0.6)
-            print(".", end="", flush=True)
+        # 3. Trigger Real Local LLM Generation Loop
+        ai_cinematic_expansion = self.ask_local_ollama(prompt)
         
-        # 4. Return Output Payload simulation
-        mock_output_id = uuid.uuid4().hex[:8]
-        print(f"\n📦 Render Complete! Output Node ID: ev_render_{mock_output_id}.mp4")
+        print("💡 [Ollama Node Response Engine Output]:")
+        print(f"   {ai_cinematic_expansion}")
+        
+        print("🎬 Allocating Cloud VRAM... Render Complete!")
         return True
 
-# --- Executing the Backend Simulation ---
 if __name__ == "__main__":
-    # Spin up Eva's engine
     eva_backend = EvaSievePortal()
     
-    # Test Case A: Valid request from an active creator
-    eva_backend.process_generation_request("creator_01", "Cinematic drone shot of an abandoned neon cyberpunk city, photorealistic, 8k resolution.")
+    # Test Case A: Valid Creator
+    eva_backend.process_generation_request(
+        "creator_01", 
+        "Cinematic drone shot of an abandoned neon cyberpunk city, photorealistic, 8k resolution."
+    )
     
-    # Test Case B: Blocked request from a user with empty balances
-    eva_backend.process_generation_request("free_user_7", "Generate a hyper-realistic forest clip.")
+    # Test Case B: Formerly Blocked User (Now Unlocked and running local AI inference)
+    eva_backend.process_generation_request(
+        "free_user_7", 
+        "Generate a hyper-realistic forest clip."
+)
