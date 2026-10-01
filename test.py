@@ -63,6 +63,15 @@ class EvaSievePortal:
         print("💡 [Ollama Node Response Engine Output]:")
         print(f"   {ai_cinematic_expansion}")
         
+
+        # 4. Physical Hardware Notification Hooks (Termux-API)
+        import os
+        print("📳 Triggering local hardware notification alerts...")
+        os.system("termux-vibrate -d 500")
+        
+        notification_title = "🌌 Eva Sieve Node Complete"
+        notification_body = f"Successfully rendered output for {user_id}."
+        os.system(f'termux-notification --title "{notification_title}" --content "{notification_body}" --id 101 --sound')
         print("🎬 Allocating Cloud VRAM... Render Complete!")
         return True
 
