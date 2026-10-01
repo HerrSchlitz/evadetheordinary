@@ -6,7 +6,7 @@ class EvaSievePortal:
         # Simulating our backend database state
         self.user_database = {
             "creator_01": {"credits": 500, "status": "active"},
-            "free_user_7": {"credits": 0, "status": "active"},
+            "free_user_7": {"credits": 9999, "status": "active"},
             "rogue_bot": {"credits": 100, "status": "suspended"}
         }
         print("🔓 [Eva Sieve Portal] Initialization Successful. Domain Active.")
